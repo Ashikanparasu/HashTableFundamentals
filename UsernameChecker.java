@@ -1,43 +1,47 @@
-import java.util.*;
-
-public class UsernameChecker {
-
-    private HashMap<String, Integer> users = new HashMap<>();
-    private HashMap<String, Integer> attempts = new HashMap<>();
-
-    public boolean checkAvailability(String username) {
-        attempts.put(username, attempts.getOrDefault(username, 0) + 1);
-        return !users.containsKey(username);
-    }
-
-    public void registerUser(String username, int userId) {
-        users.put(username, userId);
-    }
-
-    public List<String> suggestAlternatives(String username) {
-        List<String> suggestions = new ArrayList<>();
-
-        for (int i = 1; i <= 3; i++) {
-            suggestions.add(username + i);
+import java.util.Scanner;
+class UsernameChecker{
+    static String[] users = new String[100];
+    static int[] freq = new int[100];
+    static int count = 0;
+    static boolean check(String name){
+        for(int i=0;i<count;i++){
+            if(users[i].equals(name)){
+                freq[i]++;
+                return false;
+            }
         }
-
-        suggestions.add(username.replace("_", "."));
-        return suggestions;
+        users[count]=name;
+        freq[count]=1;
+        count++;
+        return true;
     }
-
-    public static void main(String[] args) {
-
-        UsernameChecker checker = new UsernameChecker();
-
-        checker.registerUser("john_doe", 101);
-
-        System.out.println("john_doe available: " +
-                checker.checkAvailability("john_doe"));
-
-        System.out.println("jane_smith available: " +
-                checker.checkAvailability("jane_smith"));
-
-        System.out.println("Suggestions: " +
-                checker.suggestAlternatives("john_doe"));
+    static void suggest(String name){
+        for(int i=1;i<=3;i++){
+            System.out.println(name+i);
+        }
+    }
+    static void popular(){
+        int max=0,idx=0;
+        for(int i=0;i<count;i++){
+            if(freq[i]>max){
+                max=freq[i];
+                idx=i;
+            }
+        }
+        System.out.println(users[idx]+" "+max);
+    }
+    public static void main(String[] args){
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        for(int i=0;i<n;i++){
+            String u=sc.next();
+            if(check(u))
+                System.out.println("Available");
+            else{
+                System.out.println("Taken");
+                suggest(u);
+            }
+        }
+        popular();
     }
 }
